@@ -16,7 +16,6 @@ jobs:
           echo "hello world I am building"
   test:
     needs: build
-    if: ${{ startsWith(cloudbees.scm.ref, 'refs/tags/') }}
     steps:
       - name: Always test
         uses: docker://golang:1.20.3-alpine3.17

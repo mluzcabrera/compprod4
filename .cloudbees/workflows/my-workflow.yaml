@@ -9,14 +9,29 @@ on:
 jobs:
   build:
     steps:
-      - name: Say hello
+      - name: Build
         uses: docker://golang:1.20.3-alpine3.17
         shell: sh
         run: |
           echo "hello world I am building"
-  deploy:
+  test:
     needs: build
     if: ${{ startsWith(cloudbees.scm.ref, 'refs/tags/') }}
+    steps:
+      - name: Always test
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "hello world I am testing"
+      - name: Test if tag
+        if: ${{ startsWith(cloudbees.scm.ref, 'refs/tags/') }}
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "hello world I am testing for tag"
+  deploy:
+    if: ${{ startsWith(cloudbees.scm.ref, 'refs/tags/') }}
+    needs: test
     steps:
       - name: Say hello
         uses: docker://golang:1.20.3-alpine3.17
